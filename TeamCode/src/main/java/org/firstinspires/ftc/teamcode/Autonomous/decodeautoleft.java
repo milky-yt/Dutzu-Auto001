@@ -23,8 +23,10 @@ public class decodeautoleft extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotor.class, "FR");
         leftRear = hardwareMap.get(DcMotor.class, "BL");
         rightRear = hardwareMap.get(DcMotor.class, "BR");
-
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(-48.6, -48.6, Math.toRadians(53));
+        drive.setPoseEstimate(startPose);
+
         // Set the direction for motors if necessary
         // leftFront.setDirection(DcMotor.Direction.FORWARD);
         // rightFront.setDirection(DcMotor.Direction.REVERSE);
@@ -33,13 +35,19 @@ public class decodeautoleft extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-            Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
-                    .strafeRight(30) // Adjust the distance to suit your needs
+            Trajectory traj1 = drive.trajectoryBuilder(startPose)
+                    .lineToSplineHeading(new Pose2d(-20, -18, Math.toRadians(233)))
                     .build();
+            drive.followTrajectory(traj1);
 
-            drive.followTrajectory(trajectory);
+
+
+
+
+
+
         }
     }
 
-    // You can remove camera-related methods and classes
+
 }

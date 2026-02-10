@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.RoadRunner.drive;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.teamcode.RoadRunner.util.AxisDirection;
+import org.firstinspires.ftc.teamcode.RoadRunner.util.BNO055IMUUtil; // ADDED
+
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
@@ -113,7 +116,19 @@ public class SampleMecanumDrive extends MecanumDrive {
         // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
         //
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
-        // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
+        // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);  XXXXX IX IX IX NUUU
+        imu = hardwareMap.get(BNO055IMU.class, "imu"); // ADDED
+
+        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters(); // ADDED
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;            // ADDED
+        parameters.loggingEnabled = false;                             // ADDED
+        imu.initialize(parameters);                                    // ADDED
+
+// Control Hub: USB-C UP, REV logo LEFT
+        BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y); // ADDED
+
+
+
 
         leftFront = hardwareMap.get(DcMotorEx.class, "FL");
         leftRear = hardwareMap.get(DcMotorEx.class, "BL");
@@ -142,10 +157,10 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: reverse any motors using DcMotor.setDirection()
 
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftRear.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);  // Add this
-        rightRear.setDirection(DcMotor.Direction.REVERSE);   // Add this
+            leftFront.setDirection(DcMotor.Direction.REVERSE);
+            leftRear.setDirection(DcMotor.Direction.REVERSE);
+            rightFront.setDirection(DcMotor.Direction.REVERSE);
+            rightRear.setDirection(DcMotor.Direction.REVERSE);
 
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
@@ -253,7 +268,11 @@ public class SampleMecanumDrive extends MecanumDrive {
     }
 
     public void setWeightedDrivePower(Pose2d drivePower) {
+
+
+
         Pose2d vel = drivePower;
+
 
         if (Math.abs(drivePower.getX()) + Math.abs(drivePower.getY())
                 + Math.abs(drivePower.getHeading()) > 1) {
@@ -301,12 +320,14 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return 0.0;
+        return getPoseEstimate().getHeading();
     }
 
     @Override
     public Double getExternalHeadingVelocity() {
-        return 0.0;
+
+        return null;
+
     }
 
     public static TrajectoryVelocityConstraint getVelocityConstraint(double maxVel, double maxAngularVel, double trackWidth) {
@@ -319,4 +340,11 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
+
+
+
+
+
+
+
 }

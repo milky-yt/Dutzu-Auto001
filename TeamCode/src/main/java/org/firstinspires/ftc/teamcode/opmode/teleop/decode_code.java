@@ -19,13 +19,14 @@ public class decode_code extends LinearOpMode {
     private DcMotorEx LL, LR, INTAKE;
     private Servo s1, s2, s3, s4, s5, s6;
 
-    private static final double LAUNCHER_POWER = 0.75;
-    private static final double INTAKE_POWER = 1.0;
+
+
+    private static final double LAUNCHER_POWER = 0.6;
+    private static final double INTAKE_POWER = 0.6;
     private static final double SERVO_FORWARD = 1.0;
     private static final double SERVO_REVERSE = 0.0;
     private static final double SERVO_STOP = 0.5;
 
-    private ElapsedTime launchTimer = new ElapsedTime();
     private boolean isLaunching = false;
     private boolean intakeOn = false;
 
@@ -73,7 +74,7 @@ public class decode_code extends LinearOpMode {
 
     private void handleDrive() {
         double y = -gamepad1.left_stick_y;
-        double x = gamepad1.left_stick_x;
+        double x = -gamepad1.left_stick_x;
         double rx = -gamepad1.right_stick_x;
 
         if (Math.abs(y) < 0.1) y = 0;
@@ -83,11 +84,9 @@ public class decode_code extends LinearOpMode {
         Vector2d input = new Vector2d(y, x);
 
         drive.setWeightedDrivePower(
-                new Pose2d(
-                        input.getX(),
-                        input.getY(),
-                        rx
-                )
+                new Pose2d(input.getX(),
+                input.getY(),
+                rx )
         );
     }
 
@@ -120,41 +119,32 @@ public class decode_code extends LinearOpMode {
     }
 
     private void handleLaunching() {
-        if (gamepad1.right_bumper && !isLaunching) {
+        if (gamepad1.right_bumper) {
+            LL.setPower(LAUNCHER_POWER);
+            LR.setPower(-LAUNCHER_POWER);
             isLaunching = true;
-            launchTimer.reset();
-
-            LL.setPower(LAUNCHER_POWER);
-            LR.setPower(-LAUNCHER_POWER);
+        }
+        else if (gamepad1.right_trigger>0.2) {
+            LL.setPower(0.8);
+            LR.setPower(-0.8);
+            isLaunching=true;
         }
 
-        if (isLaunching && launchTimer.seconds() <= 2.0) {
-            LL.setPower(LAUNCHER_POWER);
-            LR.setPower(-LAUNCHER_POWER);
 
-            if (launchTimer.seconds() >= 0.5 && launchTimer.seconds() < 2.0) {
-                s2.setPosition(SERVO_FORWARD);
-                s3.setPosition(SERVO_REVERSE);
-
-                s5.setPosition(SERVO_REVERSE);
-                s6.setPosition(SERVO_REVERSE);
-            }
-        }
-
-        if(isLaunching && launchTimer.seconds() > 2.0) {
-            isLaunching = false;
-        }
-
-        if (!gamepad1.right_bumper && !isLaunching) {
+        else if (isLaunching) {
+            LL.setPower(-LAUNCHER_POWER);
+            LR.setPower(LAUNCHER_POWER);
+            sleep(100);
             LL.setPower(0);
             LR.setPower(0);
+            isLaunching=false;
         }
     }
 
     private void handleServoControl() {
         if (gamepad1.x) {
             s2.setPosition(SERVO_FORWARD);
-            s3.setPosition(SERVO_REVERSE);
+            s3.setPosition(SERVO_FORWARD);
 
             s5.setPosition(SERVO_REVERSE);
             s6.setPosition(SERVO_REVERSE);
