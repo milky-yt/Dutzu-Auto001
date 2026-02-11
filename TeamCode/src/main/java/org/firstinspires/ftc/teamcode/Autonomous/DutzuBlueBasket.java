@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 
-@Autonomous(name = "Blue Basket Full", group = "Blue")
+@Autonomous(name = "Blue Basket", group = "Blue")
 public class DutzuBlueBasket extends LinearOpMode {
 
     @Override
@@ -18,15 +18,26 @@ public class DutzuBlueBasket extends LinearOpMode {
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-48.6, -48.6, Math.toRadians(53));
+        // Flipped start position with mirrored heading
+        Pose2d startPose = new Pose2d(-48.6, 48.6, Math.toRadians(307));
         drive.setPoseEstimate(startPose);
 
-        // -------- SLOW PURGE CONSTRAINTS --------
+        // -------- FAST CONSTRAINTS --------
+        TrajectoryVelocityConstraint fastVel =
+                new TranslationalVelocityConstraint(60);
+
+        TrajectoryAccelerationConstraint fastAccel =
+                new ProfileAccelerationConstraint(57);
+
+
+
+        // -------- SLOW CONSTRAINTS --------
         TrajectoryVelocityConstraint slowVel =
-                new TranslationalVelocityConstraint(20);
+                new TranslationalVelocityConstraint(30);
 
         TrajectoryAccelerationConstraint slowAccel =
-                new ProfileAccelerationConstraint(20);
+                new ProfileAccelerationConstraint(27);
+
 
         waitForStart();
 
@@ -36,45 +47,80 @@ public class DutzuBlueBasket extends LinearOpMode {
                 drive.trajectorySequenceBuilder(startPose)
 
                         // ===== SHOOT 1 =====
-                        .lineToSplineHeading(new Pose2d(-20, -18, Math.toRadians(233)))
-                        .waitSeconds(1.5)
+                        .setConstraints(fastVel, fastAccel) //repede
+
+                        .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
+                        .waitSeconds(0.75)
 
                         // ===== PURGE 1 (SLOW) =====
-                        .lineToSplineHeading(new Pose2d(-12, -18, Math.toRadians(270)))
-                        .waitSeconds(0.2)
-                        .setConstraints(slowVel, slowAccel)
-                        .lineToSplineHeading(new Pose2d(-12, -50, Math.toRadians(270)))
+                        .lineToSplineHeading(new Pose2d(-12, 18, Math.toRadians(90)))
+
+
                         .resetConstraints()
-                        .waitSeconds(0.2)
+                        .setConstraints(slowVel, slowAccel) //slow
+
+
+
+                        .lineToSplineHeading(new Pose2d(-12, 47, Math.toRadians(90)))
+
+
+
+                    //deschidem poarta
+                        .lineToSplineHeading(new Pose2d(7, 40, Math.toRadians(180)))
+
+                        .lineToSplineHeading(new Pose2d(7, 55, Math.toRadians(180)))
+
+
 
                         // ===== SHOOT 2 =====
-                        .lineToSplineHeading(new Pose2d(-20, -18, Math.toRadians(233)))
-                        .waitSeconds(1.5)
+                        .resetConstraints()
+                        .setConstraints(fastVel, fastAccel) //repede
+
+                        .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
+                        .waitSeconds(0.75)
 
                         // ===== PURGE 2 (SLOW) =====
-                        .lineToSplineHeading(new Pose2d(12, -18, Math.toRadians(270)))
-                        .waitSeconds(0.2)
-                        .setConstraints(slowVel, slowAccel)
-                        .lineToSplineHeading(new Pose2d(12, -50, Math.toRadians(270)))
+                        .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(90)))
+
+
                         .resetConstraints()
-                        .waitSeconds(0.2)
+                        .setConstraints(slowVel, slowAccel)
+
+
+                        .lineToSplineHeading(new Pose2d(22, 55, Math.toRadians(90)))
+                        .lineToSplineHeading(new Pose2d(22, 40, Math.toRadians(90)))
+
+
 
                         // ===== SHOOT 3 =====
-                        .lineToSplineHeading(new Pose2d(12, -18, Math.toRadians(270)))
-                        .waitSeconds(0.2)
-                        .lineToSplineHeading(new Pose2d(-20, -18, Math.toRadians(233)))
-                        .waitSeconds(1.5)
+                        .resetConstraints()
+                        .setConstraints(fastVel, fastAccel) //repede
+
+
+                        .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
+                        .waitSeconds(0.75)
 
                         // ===== PURGE 3 (SLOW) =====
-                        .lineToSplineHeading(new Pose2d(36, -18, Math.toRadians(270)))
-                        .waitSeconds(0.2)
-                        .setConstraints(slowVel, slowAccel)
-                        .lineToSplineHeading(new Pose2d(36, -50, Math.toRadians(270)))
-                        .resetConstraints()
-                        .waitSeconds(0.2)
+                        .lineToSplineHeading(new Pose2d(36, 10, Math.toRadians(90)))
 
-                        // ===== FINAL MOVE =====
-                        .lineToSplineHeading(new Pose2d(0, -30, Math.toRadians(180)))
+
+
+                        .resetConstraints()
+                        .setConstraints(slowVel, slowAccel)
+
+
+                        .lineToSplineHeading(new Pose2d(36, 55, Math.toRadians(90)))
+                        .lineToSplineHeading(new Pose2d(36, 40, Math.toRadians(90)))
+
+
+                        //SHOOT FINAL
+                        .resetConstraints()
+                        .setConstraints(fastVel, fastAccel)
+                        .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
+                        .waitSeconds(0.75)
+
+
+
 
                         .build()
         );

@@ -15,7 +15,7 @@ public class DutzuBluePreloadBack extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         // Flipped start position with mirrored heading
-        Pose2d startPose = new Pose2d(61.5, -12, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(61.5, 12, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
 
 
@@ -28,7 +28,7 @@ public class DutzuBluePreloadBack extends LinearOpMode {
                 drive.trajectorySequenceBuilder(startPose)
 
                         // ===== SHOOT 1 =====
-                        .lineToSplineHeading(new Pose2d(-20, -18, Math.toRadians(127)))
+                        .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
                         .waitSeconds(1.5)
 
                         .build()

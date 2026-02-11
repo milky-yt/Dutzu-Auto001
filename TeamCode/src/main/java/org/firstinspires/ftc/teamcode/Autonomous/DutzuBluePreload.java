@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 
-@Autonomous(name = "Blue Preload ", group = "Blue")
+@Autonomous(name = "Blue Preload", group = "Blue")
 public class DutzuBluePreload extends LinearOpMode {
 
     @Override
@@ -15,7 +15,7 @@ public class DutzuBluePreload extends LinearOpMode {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         // Flipped start position with mirrored heading
-        Pose2d startPose = new Pose2d(-48.6, -48.6, Math.toRadians(307));
+        Pose2d startPose = new Pose2d(-48.6, 48.6, Math.toRadians(307));
         drive.setPoseEstimate(startPose);
 
 
@@ -28,7 +28,7 @@ public class DutzuBluePreload extends LinearOpMode {
                 drive.trajectorySequenceBuilder(startPose)
 
                         // ===== SHOOT 1 =====
-                        .lineToSplineHeading(new Pose2d(-20, -18, Math.toRadians(233)))
+                        .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
                         .waitSeconds(1.5)
 
                         .build()
