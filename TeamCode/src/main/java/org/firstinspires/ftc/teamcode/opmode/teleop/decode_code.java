@@ -34,11 +34,11 @@ public class decode_code extends LinearOpMode {
     ElapsedTime matchTimer = new ElapsedTime();
     boolean lastRB = false;
     boolean lastIntake = false;
-
     private boolean isLaunching = false;
     private boolean intakeOn = false;
     boolean endgameRumbled = false;
     boolean parkRumbled = false;
+
     @Override
 
 
@@ -59,7 +59,7 @@ public class decode_code extends LinearOpMode {
             handleAngle();
             handleServoControl();
             updateTelemetry();
- //           debug_values(); //debug
+            debug_values(); //debug
             drive.update();
             rumble();
         }
@@ -78,15 +78,7 @@ public class decode_code extends LinearOpMode {
     parkRumbled = true;
     }
 
-
-
-
     }
-
-
-
-
-
 
 
     private void initializeHardware() {
@@ -109,10 +101,12 @@ public class decode_code extends LinearOpMode {
         s4.setPosition(ANGLE_CLOSE_ARCH);
     }
 
+
     private void setupMotors() {
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
+
 
     private void handleDrive() {
         double y = -gamepad1.left_stick_y;
@@ -134,7 +128,7 @@ public class decode_code extends LinearOpMode {
 
 
     private void handleAngle(){
-        if (gamepad2.dpad_up)        {
+        if (gamepad1.dpad_up)        { //momentan pe driver 1 pt meet
             s3.setPosition(ANGLE_CLOSE_ARCH); //valoare de dat cu bolta (DE APROAPE)
             s4.setPosition(ANGLE_CLOSE_ARCH);
 
@@ -146,13 +140,13 @@ public class decode_code extends LinearOpMode {
 
             LAUNCHER_POWER = LAUNCHER_CLOSE_STRAIGHT;
         }
-        if (gamepad2.dpad_left)     {
+        if (gamepad2.dpad_left)     { // mom pe driver 1 pt meet
             s3.setPosition(ANGLE_FAR_ARCH); // valoare de dat cu bolta (DE DEPARTE)
             s4.setPosition(ANGLE_FAR_ARCH);
 
             LAUNCHER_POWER = LAUNCHER_FAR_ARCH;
         }
-        if (gamepad2.dpad_down)        {
+        if (gamepad1.dpad_down)        {
             s3.setPosition(ANGLE_FAR_STRAIGHT); //valoare de dat drept (DE DEPARTE)
             s4.setPosition(ANGLE_FAR_STRAIGHT);
 
@@ -160,24 +154,26 @@ public class decode_code extends LinearOpMode {
         }
     }
 
+
     private void handleLaunching() {
 
-        if (gamepad2.right_bumper && !lastRB) {
+        if (gamepad1.right_bumper && !lastRB) { //momentan pe driver 1 pt meet
             isLaunching = !isLaunching;
         }
 
-        lastRB = gamepad2.right_bumper;
+        lastRB = gamepad1.right_bumper;
 
         OUTTAKE.setPower(isLaunching ? LAUNCHER_POWER : 0);
     }
 
+
     private void handleIntake() {
 
-        if (gamepad1.right_bumper && !lastIntake) {
+        if (gamepad1.left_bumper && !lastIntake) {
             intakeOn = !intakeOn;
         }
 
-        lastIntake = gamepad1.right_bumper;
+        lastIntake = gamepad1.left_bumper;
 
         INTAKE.setPower(intakeOn ? INTAKE_POWER : 0);
     }
@@ -199,36 +195,41 @@ public class decode_code extends LinearOpMode {
 
 
 
-
-//DEBUG PT A GASI VALORI LA POWER SI LA ANGLE
     private void debug_values(){
-        if (gamepad1.b){
-            ANGLE_CLOSE_ARCH = ANGLE_CLOSE_ARCH + 0.01;
-            ANGLE_FAR_ARCH = ANGLE_FAR_ARCH + 0.01;
-            ANGLE_CLOSE_STRAIGHT = ANGLE_CLOSE_STRAIGHT +0.01;
-            ANGLE_FAR_STRAIGHT = ANGLE_FAR_STRAIGHT + 0.01;
-        }
-        if (gamepad1.x){
-            ANGLE_CLOSE_ARCH = ANGLE_CLOSE_ARCH - 0.01;
-            ANGLE_FAR_ARCH = ANGLE_FAR_ARCH - 0.01;
-            ANGLE_CLOSE_STRAIGHT = ANGLE_CLOSE_STRAIGHT - 0.01;
-            ANGLE_FAR_STRAIGHT = ANGLE_FAR_STRAIGHT - 0.01;
-        }
+        if (gamepad1.ps) {
+            if (gamepad1.b) {
+                ANGLE_CLOSE_ARCH = ANGLE_CLOSE_ARCH + 0.05;
+                ANGLE_FAR_ARCH = ANGLE_FAR_ARCH + 0.05;
+                ANGLE_CLOSE_STRAIGHT = ANGLE_CLOSE_STRAIGHT + 0.05;
+                ANGLE_FAR_STRAIGHT = ANGLE_FAR_STRAIGHT + 0.05;
+                sleep(10);
+            }
+
+            if (gamepad1.x) {
+                ANGLE_CLOSE_ARCH = ANGLE_CLOSE_ARCH - 0.05;
+                ANGLE_FAR_ARCH = ANGLE_FAR_ARCH - 0.05;
+                ANGLE_CLOSE_STRAIGHT = ANGLE_CLOSE_STRAIGHT - 0.05;
+                ANGLE_FAR_STRAIGHT = ANGLE_FAR_STRAIGHT - 0.05;
+                sleep(10);
+            }
 
 
-        if (gamepad1.y){
-            LAUNCHER_CLOSE_ARCH = LAUNCHER_CLOSE_ARCH + 0.01;
-            LAUNCHER_FAR_ARCH = LAUNCHER_FAR_ARCH + 0.01;
-            LAUNCHER_CLOSE_STRAIGHT = LAUNCHER_CLOSE_STRAIGHT +0.01;
-            LAUNCHER_FAR_STRAIGHT = LAUNCHER_FAR_STRAIGHT + 0.01;
-        }
-        if (gamepad1.a){
-            LAUNCHER_CLOSE_ARCH = LAUNCHER_CLOSE_ARCH - 0.01;
-            LAUNCHER_FAR_ARCH = LAUNCHER_FAR_ARCH - 0.01;
-            LAUNCHER_CLOSE_STRAIGHT = LAUNCHER_CLOSE_STRAIGHT - 0.01;
-            LAUNCHER_FAR_STRAIGHT = LAUNCHER_FAR_STRAIGHT - 0.01;
-        }
+            if (gamepad1.y) {
+                LAUNCHER_CLOSE_ARCH = LAUNCHER_CLOSE_ARCH + 0.05;
+                LAUNCHER_FAR_ARCH = LAUNCHER_FAR_ARCH + 0.05;
+                LAUNCHER_CLOSE_STRAIGHT = LAUNCHER_CLOSE_STRAIGHT + 0.05;
+                LAUNCHER_FAR_STRAIGHT = LAUNCHER_FAR_STRAIGHT + 0.05;
+                sleep(10);
+            }
 
+            if (gamepad1.a) {
+                LAUNCHER_CLOSE_ARCH = LAUNCHER_CLOSE_ARCH - 0.05;
+                LAUNCHER_FAR_ARCH = LAUNCHER_FAR_ARCH - 0.05;
+                LAUNCHER_CLOSE_STRAIGHT = LAUNCHER_CLOSE_STRAIGHT - 0.05;
+                LAUNCHER_FAR_STRAIGHT = LAUNCHER_FAR_STRAIGHT - 0.05;
+                sleep(10);
+            }
+        }
 
     }
 
