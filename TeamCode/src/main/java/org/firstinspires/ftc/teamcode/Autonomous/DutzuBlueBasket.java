@@ -9,19 +9,32 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 
-@Autonomous(name = "Blue Basket", group = "Blue")
+@Autonomous(name = "Blue Basket", group = "Red")
 public class DutzuBlueBasket extends LinearOpMode {
-    private DcMotorEx OUTTAKE;
-
-    private DcMotorEx INTAKE;
+    DcMotorEx INTAKE;
+    DcMotorEx OUTTAKE;
+    Servo s1;
+    Servo s2;
+    Servo s3;
+    Servo s4;
     @Override
     public void runOpMode() {
 
-
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+
+        s1 = hardwareMap.get(Servo.class, "s1");
+        s2 = hardwareMap.get(Servo.class, "s2");
+        s3 = hardwareMap.get(Servo.class, "s3");
+        s4 = hardwareMap.get(Servo.class, "s4");
+        OUTTAKE = hardwareMap.get(DcMotorEx.class, "OUTTAKE");
+        INTAKE = hardwareMap.get(DcMotorEx.class, "INTAKE");
+        OUTTAKE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        OUTTAKE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        INTAKE.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // Flipped start position with mirrored heading
         Pose2d startPose = new Pose2d(-48.6, 48.6, Math.toRadians(307));
@@ -29,27 +42,19 @@ public class DutzuBlueBasket extends LinearOpMode {
 
         // -------- FAST CONSTRAINTS --------
         TrajectoryVelocityConstraint fastVel =
-                new TranslationalVelocityConstraint(30);
+                new TranslationalVelocityConstraint(40);
 
         TrajectoryAccelerationConstraint fastAccel =
-                new ProfileAccelerationConstraint(27);
+                new ProfileAccelerationConstraint(37);
 
 
 
         // -------- SLOW CONSTRAINTS --------
         TrajectoryVelocityConstraint slowVel =
-                new TranslationalVelocityConstraint(10);
+                new TranslationalVelocityConstraint(20);
 
         TrajectoryAccelerationConstraint slowAccel =
-                new ProfileAccelerationConstraint(10);
-
-        OUTTAKE = hardwareMap.get(DcMotorEx.class, "OUTTAKE");
-        OUTTAKE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        OUTTAKE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        OUTTAKE = hardwareMap.get(DcMotorEx.class, "INTAKE");
-        OUTTAKE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        OUTTAKE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+                new ProfileAccelerationConstraint(17);
 
         waitForStart();
 
@@ -62,26 +67,34 @@ public class DutzuBlueBasket extends LinearOpMode {
                         .setConstraints(fastVel, fastAccel) //repede
 
                         .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
-                        .waitSeconds(0.75)
+
+                        //launcher ON|
+
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> OUTTAKE.setPower(1))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(1))
+                        .waitSeconds(3)
+                        .UNSTABLE_addTemporalMarkerOffset(0, () -> OUTTAKE.setPower(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(0.5))
+
+
 
                         // ===== PURGE 1 (SLOW) =====
                         .lineToSplineHeading(new Pose2d(-12, 18, Math.toRadians(90)))
-
 
                         .resetConstraints()
                         .setConstraints(slowVel, slowAccel) //slow
 
 
+                        .addDisplacementMarker( () -> {
+                            INTAKE.setPower(0.6);
+                        })
+
 
                         .lineToSplineHeading(new Pose2d(-12, 47, Math.toRadians(90)))
 
-
-
-                    //deschidem poarta
-                        .lineToSplineHeading(new Pose2d(7, 40, Math.toRadians(180)))
-
-                        .lineToSplineHeading(new Pose2d(7, 55, Math.toRadians(180)))
-
+                        .addDisplacementMarker(() -> {
+                            INTAKE.setPower(0);
+                        })
 
 
                         // ===== SHOOT 2 =====
@@ -89,53 +102,49 @@ public class DutzuBlueBasket extends LinearOpMode {
                         .setConstraints(fastVel, fastAccel) //repede
 
                         .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
-                        .addTemporalMarker(() -> {
-                            OUTTAKE.setVelocity(53770);   // or whatever your launch power is
-                        })
-                        .waitSeconds(0.75)
-                        .addTemporalMarker(() -> {
-                            OUTTAKE.setVelocity(53770);   // or whatever your launch power is
-                        })
+
+                        //launcher ON
+
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> OUTTAKE.setPower(1))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(1))
+                        .waitSeconds(3)
+                        .UNSTABLE_addTemporalMarkerOffset(0, () -> OUTTAKE.setPower(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(0.5))
+
+
+
                         // ===== PURGE 2 (SLOW) =====
                         .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(90)))
-
 
                         .resetConstraints()
                         .setConstraints(slowVel, slowAccel)
 
+
+                        .addDisplacementMarker( () -> {
+                            INTAKE.setPower(0.6);
+                        })
 
                         .lineToSplineHeading(new Pose2d(22, 55, Math.toRadians(90)))
                         .lineToSplineHeading(new Pose2d(22, 40, Math.toRadians(90)))
 
 
+                        .addDisplacementMarker( () -> {
+                            INTAKE.setPower(0);
+                        })
 
                         // ===== SHOOT 3 =====
                         .resetConstraints()
                         .setConstraints(fastVel, fastAccel) //repede
 
-
                         .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
-                        .waitSeconds(0.75)
-
-                        // ===== PURGE 3 (SLOW) =====
-                        .lineToSplineHeading(new Pose2d(36, 10, Math.toRadians(90)))
 
 
-
-                        .resetConstraints()
-                        .setConstraints(slowVel, slowAccel)
-
-
-                        .lineToSplineHeading(new Pose2d(36, 55, Math.toRadians(90)))
-                        .lineToSplineHeading(new Pose2d(36, 40, Math.toRadians(90)))
-
-
-                        //SHOOT FINAL
-                        .resetConstraints()
-                        .setConstraints(fastVel, fastAccel)
-                        .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
-                        .waitSeconds(0.75)
-
+                        //launcher ON
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(1))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> OUTTAKE.setPower(1))
+                        .waitSeconds(3)
+                        .UNSTABLE_addTemporalMarkerOffset(0, () -> OUTTAKE.setPower(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(0.5))
 
 
 
