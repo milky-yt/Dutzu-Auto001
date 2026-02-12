@@ -25,10 +25,10 @@ public class decode_code extends LinearOpMode {
     private double ANGLE_FAR_ARCH = 0.9;   //UNGH LUAT DE RAMPA DE OUTTAKE PT BOLTA, DIN ZONA DE LANGA PARKING
     private double ANGLE_FAR_STRAIGHT = 0.4;   //UNGH LUAT DE RAMPA DE OUTTAKE PT DREPT, DIN ZONA DE LANGA PARKING
 
-    private double LAUNCHER_CLOSE_ARCH = 26885; //ticks per second cu pidu integrat
-    private double LAUNCHER_CLOSE_STRAIGHT = 17923;
-    private double LAUNCHER_FAR_ARCH = 53770;
-    private double LAUNCHER_FAR_STRAIGHT = 26885;
+    private double LAUNCHER_CLOSE_ARCH = 2500; //ticks per second cu pidu integrat
+    private double LAUNCHER_CLOSE_STRAIGHT = 2000;
+    private double LAUNCHER_FAR_ARCH = 1800;
+    private double LAUNCHER_FAR_STRAIGHT = 1000;
     private double LAUNCHER_POWER = LAUNCHER_CLOSE_ARCH; //initializat pt launcher close arch
 
     private double INTAKE_POWER = 0.6;
@@ -92,7 +92,7 @@ public class decode_code extends LinearOpMode {
 
         OUTTAKE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         OUTTAKE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        OUTTAKE.setPower(0);
+        OUTTAKE.setVelocity(0);
 
         s1 = hardwareMap.get(Servo.class, "s1"); // primu rand de servo
         s2 = hardwareMap.get(Servo.class, "s2"); //randu doi de servo
@@ -130,7 +130,7 @@ public class decode_code extends LinearOpMode {
 
 
     private void handleAngle(){
-        if (gamepad1.dpad_up)        { //momentan pe driver 1 pt meet
+        if (gamepad2.dpad_up)        { //momentan pe driver 1 pt meet
             s3.setPosition(ANGLE_CLOSE_ARCH); //valoare de dat cu bolta (DE APROAPE)
             s4.setPosition(ANGLE_CLOSE_ARCH);
 
@@ -148,7 +148,7 @@ public class decode_code extends LinearOpMode {
 
             LAUNCHER_POWER = LAUNCHER_FAR_ARCH;
         }
-        if (gamepad1.dpad_down)        {
+        if (gamepad2.dpad_down)        {
             s3.setPosition(ANGLE_FAR_STRAIGHT); //valoare de dat drept (DE DEPARTE)
             s4.setPosition(ANGLE_FAR_STRAIGHT);
 
@@ -240,6 +240,10 @@ public class decode_code extends LinearOpMode {
     private void updateTelemetry() {
         telemetry.addLine("=== FTC TeleOp ===");
         // debug
+        telemetry.addData("TARGET VELOCITY", LAUNCHER_POWER);
+        telemetry.addData("ACTUAL VELOCITY", OUTTAKE.getVelocity());
+
+
         telemetry.addLine("\n=== DEBUG Controls ===");
         telemetry.addLine("\n=== driver 1 cerc, creste putere spindex, patrat scade ===");
         telemetry.addData("Launcher FAR STRAIGHT", LAUNCHER_FAR_STRAIGHT);

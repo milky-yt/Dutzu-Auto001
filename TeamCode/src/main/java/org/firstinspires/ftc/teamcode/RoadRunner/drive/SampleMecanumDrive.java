@@ -1,10 +1,7 @@
 package org.firstinspires.ftc.teamcode.RoadRunner.drive;
-
 import androidx.annotation.NonNull;
-
 import org.firstinspires.ftc.teamcode.RoadRunner.util.AxisDirection;
 import org.firstinspires.ftc.teamcode.RoadRunner.util.BNO055IMUUtil; // ADDED
-
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.drive.DriveSignal;
@@ -21,6 +18,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
+import com.qualcomm.hardware.bosch.BHI260IMU;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -117,15 +115,9 @@ public class SampleMecanumDrive extends MecanumDrive {
         //
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);  XXXXX IX IX IX NUUU
-        imu = hardwareMap.get(BNO055IMU.class, "imu"); // ADDED
+                           // ADDED
 
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters(); // ADDED
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;            // ADDED
-        parameters.loggingEnabled = false;                             // ADDED
-        imu.initialize(parameters);                                    // ADDED
 
-// Control Hub: USB-C UP, REV logo LEFT
-        BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y); // ADDED
 
 
 
@@ -320,7 +312,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public double getRawExternalHeading() {
-        return getPoseEstimate().getHeading();
+        return 0;
     }
 
     @Override
