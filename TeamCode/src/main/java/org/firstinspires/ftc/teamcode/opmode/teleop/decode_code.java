@@ -24,11 +24,13 @@ public class decode_code extends LinearOpMode {
     private double ANGLE_CLOSE_STRAIGHT = 0.5; //UNGH LUAT DE RAMPA DE OUTTAKE PT DREPT, DIN ZONA DE LANGA COSURI
     private double ANGLE_FAR_ARCH = 0.9;   //UNGH LUAT DE RAMPA DE OUTTAKE PT BOLTA, DIN ZONA DE LANGA PARKING
     private double ANGLE_FAR_STRAIGHT = 0.4;   //UNGH LUAT DE RAMPA DE OUTTAKE PT DREPT, DIN ZONA DE LANGA PARKING
-    private double LAUNCHER_CLOSE_ARCH = 0.1;
-    private double LAUNCHER_CLOSE_STRAIGHT = 0.3;
-    private double LAUNCHER_FAR_ARCH = 0.5;
-    private double LAUNCHER_FAR_STRAIGHT = 1;
+
+    private double LAUNCHER_CLOSE_ARCH = 26885; //ticks per second cu pidu integrat
+    private double LAUNCHER_CLOSE_STRAIGHT = 17923;
+    private double LAUNCHER_FAR_ARCH = 53770;
+    private double LAUNCHER_FAR_STRAIGHT = 26885;
     private double LAUNCHER_POWER = LAUNCHER_CLOSE_ARCH; //initializat pt launcher close arch
+
     private double INTAKE_POWER = 0.6;
 
     ElapsedTime matchTimer = new ElapsedTime();
@@ -87,13 +89,13 @@ public class decode_code extends LinearOpMode {
 
         OUTTAKE = hardwareMap.get(DcMotorEx.class, "OUTTAKE");
         INTAKE = hardwareMap.get(DcMotorEx.class, "INTAKE");
-        OUTTAKE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        OUTTAKE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         OUTTAKE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         OUTTAKE.setPower(0);
 
         s1 = hardwareMap.get(Servo.class, "s1"); // primu rand de servo
         s2 = hardwareMap.get(Servo.class, "s2"); //randu doi de servo
-
 
         s3 = hardwareMap.get(Servo.class, "s3"); // servo unghi outtake 1
         s4 = hardwareMap.get(Servo.class, "s4"); //servo unghi outtake 2
@@ -163,7 +165,7 @@ public class decode_code extends LinearOpMode {
 
         lastRB = gamepad1.right_bumper;
 
-        OUTTAKE.setPower(isLaunching ? LAUNCHER_POWER : 0);
+        OUTTAKE.setVelocity(isLaunching ? LAUNCHER_POWER : 0);
     }
 
 
@@ -215,18 +217,18 @@ public class decode_code extends LinearOpMode {
 
 
             if (gamepad1.y) {
-                LAUNCHER_CLOSE_ARCH = LAUNCHER_CLOSE_ARCH + 0.05;
-                LAUNCHER_FAR_ARCH = LAUNCHER_FAR_ARCH + 0.05;
-                LAUNCHER_CLOSE_STRAIGHT = LAUNCHER_CLOSE_STRAIGHT + 0.05;
-                LAUNCHER_FAR_STRAIGHT = LAUNCHER_FAR_STRAIGHT + 0.05;
+                LAUNCHER_CLOSE_ARCH = LAUNCHER_CLOSE_ARCH + 100;
+                LAUNCHER_FAR_ARCH = LAUNCHER_FAR_ARCH + 100;
+                LAUNCHER_CLOSE_STRAIGHT = LAUNCHER_CLOSE_STRAIGHT + 100;
+                LAUNCHER_FAR_STRAIGHT = LAUNCHER_FAR_STRAIGHT + 100;
                 sleep(10);
             }
 
             if (gamepad1.a) {
-                LAUNCHER_CLOSE_ARCH = LAUNCHER_CLOSE_ARCH - 0.05;
-                LAUNCHER_FAR_ARCH = LAUNCHER_FAR_ARCH - 0.05;
-                LAUNCHER_CLOSE_STRAIGHT = LAUNCHER_CLOSE_STRAIGHT - 0.05;
-                LAUNCHER_FAR_STRAIGHT = LAUNCHER_FAR_STRAIGHT - 0.05;
+                LAUNCHER_CLOSE_ARCH = LAUNCHER_CLOSE_ARCH - 100;
+                LAUNCHER_FAR_ARCH = LAUNCHER_FAR_ARCH - 100;
+                LAUNCHER_CLOSE_STRAIGHT = LAUNCHER_CLOSE_STRAIGHT - 100;
+                LAUNCHER_FAR_STRAIGHT = LAUNCHER_FAR_STRAIGHT - 100;
                 sleep(10);
             }
         }

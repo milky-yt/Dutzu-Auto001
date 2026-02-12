@@ -7,14 +7,19 @@ import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityCons
 import com.acmerobotics.roadrunner.trajectory.constraints.TranslationalVelocityConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.RoadRunner.drive.SampleMecanumDrive;
 
 @Autonomous(name = "Blue Basket", group = "Blue")
 public class DutzuBlueBasket extends LinearOpMode {
+    private DcMotorEx OUTTAKE;
 
+    private DcMotorEx INTAKE;
     @Override
     public void runOpMode() {
+
 
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
@@ -37,6 +42,13 @@ public class DutzuBlueBasket extends LinearOpMode {
 
         TrajectoryAccelerationConstraint slowAccel =
                 new ProfileAccelerationConstraint(10);
+
+        OUTTAKE = hardwareMap.get(DcMotorEx.class, "OUTTAKE");
+        OUTTAKE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        OUTTAKE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        OUTTAKE = hardwareMap.get(DcMotorEx.class, "INTAKE");
+        OUTTAKE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        OUTTAKE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
         waitForStart();
@@ -77,8 +89,13 @@ public class DutzuBlueBasket extends LinearOpMode {
                         .setConstraints(fastVel, fastAccel) //repede
 
                         .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))
+                        .addTemporalMarker(() -> {
+                            OUTTAKE.setVelocity(53770);   // or whatever your launch power is
+                        })
                         .waitSeconds(0.75)
-
+                        .addTemporalMarker(() -> {
+                            OUTTAKE.setVelocity(53770);   // or whatever your launch power is
+                        })
                         // ===== PURGE 2 (SLOW) =====
                         .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(90)))
 
