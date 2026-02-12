@@ -36,7 +36,7 @@ public class MeepMeepTesting {
                             new ProfileAccelerationConstraint(20);
 
                     return drive.trajectorySequenceBuilder(
-                                    new Pose2d(-48.6, 48.6, Math.toRadians(127)))
+                                    new Pose2d(-48.6, -48.6, Math.toRadians(232)))
 
                             // ===== SHOOT 1 =====
                             .lineToSplineHeading(new Pose2d(-20, 18, Math.toRadians(127)))

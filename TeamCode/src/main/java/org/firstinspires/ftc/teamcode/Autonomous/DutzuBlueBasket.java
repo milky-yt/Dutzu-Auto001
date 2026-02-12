@@ -24,19 +24,19 @@ public class DutzuBlueBasket extends LinearOpMode {
 
         // -------- FAST CONSTRAINTS --------
         TrajectoryVelocityConstraint fastVel =
-                new TranslationalVelocityConstraint(60);
+                new TranslationalVelocityConstraint(30);
 
         TrajectoryAccelerationConstraint fastAccel =
-                new ProfileAccelerationConstraint(57);
+                new ProfileAccelerationConstraint(27);
 
 
 
         // -------- SLOW CONSTRAINTS --------
         TrajectoryVelocityConstraint slowVel =
-                new TranslationalVelocityConstraint(30);
+                new TranslationalVelocityConstraint(10);
 
         TrajectoryAccelerationConstraint slowAccel =
-                new ProfileAccelerationConstraint(27);
+                new ProfileAccelerationConstraint(10);
 
 
         waitForStart();

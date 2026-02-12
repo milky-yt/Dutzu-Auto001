@@ -20,24 +20,28 @@ public class decode_code extends LinearOpMode {
     private DcMotorEx OUTTAKE, INTAKE;
     private Servo s1, s2, s3, s4;
 
-    private static double ANGLE_CLOSE_ARCH = 0.9; //UNGH LUAT DE RAMPA DE OUTTAKE PT BOLTA, DIN ZONA DE LANGA COSURI
-    private static double ANGLE_CLOSE_STRAIGHT = 0.6; //UNGH LUAT DE RAMPA DE OUTTAKE PT DREPT, DIN ZONA DE LANGA COSURI
-    private static double ANGLE_FAR_ARCH = 0.9;   //UNGH LUAT DE RAMPA DE OUTTAKE PT BOLTA, DIN ZONA DE LANGA PARKING
-    private static double ANGLE_FAR_STRAIGHT = 0.6;   //UNGH LUAT DE RAMPA DE OUTTAKE PT DREPT, DIN ZONA DE LANGA PARKING
-    private static double LAUNCHER_CLOSE_ARCH = 1;
-    private static double LAUNCHER_CLOSE_STRAIGHT = 1;
-    private static double LAUNCHER_FAR_ARCH = 1;
-    private static double LAUNCHER_FAR_STRAIGHT = 1;
-    private static double LAUNCHER_POWER = 1; //initializat pt launcher close arch
+    private double ANGLE_CLOSE_ARCH = 0.7; //UNGH LUAT DE RAMPA DE OUTTAKE PT BOLTA, DIN ZONA DE LANGA COSURI
+    private double ANGLE_CLOSE_STRAIGHT = 0.5; //UNGH LUAT DE RAMPA DE OUTTAKE PT DREPT, DIN ZONA DE LANGA COSURI
+    private double ANGLE_FAR_ARCH = 0.9;   //UNGH LUAT DE RAMPA DE OUTTAKE PT BOLTA, DIN ZONA DE LANGA PARKING
+    private double ANGLE_FAR_STRAIGHT = 0.4;   //UNGH LUAT DE RAMPA DE OUTTAKE PT DREPT, DIN ZONA DE LANGA PARKING
+    private double LAUNCHER_CLOSE_ARCH = 0.1;
+    private double LAUNCHER_CLOSE_STRAIGHT = 0.3;
+    private double LAUNCHER_FAR_ARCH = 0.5;
+    private double LAUNCHER_FAR_STRAIGHT = 1;
+    private double LAUNCHER_POWER = LAUNCHER_CLOSE_ARCH; //initializat pt launcher close arch
+    private double INTAKE_POWER = 0.6;
 
-    private static final double INTAKE_POWER = 0.6;
-    private static final double SERVO_FORWARD = 1.0;
-
+    ElapsedTime matchTimer = new ElapsedTime();
+    boolean lastRB = false;
+    boolean lastIntake = false;
 
     private boolean isLaunching = false;
     private boolean intakeOn = false;
-
+    boolean endgameRumbled = false;
+    boolean parkRumbled = false;
     @Override
+
+
     public void runOpMode() throws InterruptedException {
         initializeHardware();
         setupMotors();
@@ -46,6 +50,7 @@ public class decode_code extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+        matchTimer.reset();
 
         while (opModeIsActive()) {
             handleDrive();
@@ -54,10 +59,35 @@ public class decode_code extends LinearOpMode {
             handleAngle();
             handleServoControl();
             updateTelemetry();
-            debug_values(); //debug
+ //           debug_values(); //debug
             drive.update();
+            rumble();
         }
     }
+
+
+
+    private void rumble(){
+    if (matchTimer.seconds() >= 100 && !endgameRumbled){
+        gamepad1.rumbleBlips(3);
+        gamepad2.rumbleBlips(3);
+        endgameRumbled= true;
+    }
+    if(matchTimer.seconds() >= 115 && !parkRumbled){
+        gamepad1.rumble(200);
+    parkRumbled = true;
+    }
+
+
+
+
+    }
+
+
+
+
+
+
 
     private void initializeHardware() {
         drive = new SampleMecanumDrive(hardwareMap);
@@ -65,6 +95,9 @@ public class decode_code extends LinearOpMode {
 
         OUTTAKE = hardwareMap.get(DcMotorEx.class, "OUTTAKE");
         INTAKE = hardwareMap.get(DcMotorEx.class, "INTAKE");
+        OUTTAKE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        OUTTAKE.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        OUTTAKE.setPower(0);
 
         s1 = hardwareMap.get(Servo.class, "s1"); // primu rand de servo
         s2 = hardwareMap.get(Servo.class, "s2"); //randu doi de servo
@@ -99,19 +132,7 @@ public class decode_code extends LinearOpMode {
         );
     }
 
-    private void handleIntake() {
-        if (gamepad1.right_bumper) {
-            intakeOn = !intakeOn;
-            if (intakeOn) {
-                INTAKE.setPower(INTAKE_POWER);
-            } else {
-                INTAKE.setPower(0);
-            }
-            while (gamepad1.right_bumper) {
-                sleep(10);
-            }
-        }
-    }
+
     private void handleAngle(){
         if (gamepad2.dpad_up)        {
             s3.setPosition(ANGLE_CLOSE_ARCH); //valoare de dat cu bolta (DE APROAPE)
@@ -140,27 +161,38 @@ public class decode_code extends LinearOpMode {
     }
 
     private void handleLaunching() {
-        if (gamepad2.right_bumper) {
-            OUTTAKE.setPower(LAUNCHER_POWER);
-            isLaunching = true;
+
+        if (gamepad2.right_bumper && !lastRB) {
+            isLaunching = !isLaunching;
         }
 
+        lastRB = gamepad2.right_bumper;
 
-        if (isLaunching) { //inseamna doar ca nu e toggle si ii dai timp de wind down
-            //TODO: eventual o miscare de revert ca daca dai click din greseala sa nu lanseze / ca sa anuleze miscarea
-            OUTTAKE.setPower(LAUNCHER_POWER);
-
-            sleep(100);
-
-            OUTTAKE.setPower(0);
-            isLaunching=false;
-        }
+        OUTTAKE.setPower(isLaunching ? LAUNCHER_POWER : 0);
     }
+
+    private void handleIntake() {
+
+        if (gamepad1.right_bumper && !lastIntake) {
+            intakeOn = !intakeOn;
+        }
+
+        lastIntake = gamepad1.right_bumper;
+
+        INTAKE.setPower(intakeOn ? INTAKE_POWER : 0);
+    }
+
+
 
     private void handleServoControl() {
         if (gamepad1.x) {
-            s1.setPosition(SERVO_FORWARD);
-            s2.setPosition(SERVO_FORWARD);
+        s1.setPosition(1);
+        s2.setPosition(0);
+            }
+        else{
+
+        s1.setPosition(0.5);
+        s2.setPosition(0.5);
 
         }
     }
