@@ -45,16 +45,16 @@ public class DutzuBlueBasket extends LinearOpMode {
 
         // -------- FAST CONSTRAINTS --------
         TrajectoryVelocityConstraint fastVel =
-                new TranslationalVelocityConstraint(40);
+                new TranslationalVelocityConstraint(55);
 
         TrajectoryAccelerationConstraint fastAccel =
-                new ProfileAccelerationConstraint(40);
+                new ProfileAccelerationConstraint(30);
 
 
 
         // -------- SLOW CONSTRAINTS --------
         TrajectoryVelocityConstraint slowVel =
-                new TranslationalVelocityConstraint(15);
+                new TranslationalVelocityConstraint(25);
 
         TrajectoryAccelerationConstraint slowAccel =
                 new ProfileAccelerationConstraint(15);
@@ -102,7 +102,7 @@ public class DutzuBlueBasket extends LinearOpMode {
                         })
 
 
-                        .lineToSplineHeading(new Pose2d(-12, 57, Math.toRadians(90)))
+                        .lineToSplineHeading(new Pose2d(-12, 52, Math.toRadians(90)))
 
                         .addDisplacementMarker(() -> {
                             INTAKE.setPower(0);
@@ -133,7 +133,7 @@ public class DutzuBlueBasket extends LinearOpMode {
 
 
                         // ===== PURGE 2 (SLOW) =====
-                        .lineToSplineHeading(new Pose2d(7, 20, Math.toRadians(90)))
+                        .lineToSplineHeading(new Pose2d(22, 20, Math.toRadians(90)))
 
                         .resetConstraints()
                         .setConstraints(slowVel, slowAccel)
