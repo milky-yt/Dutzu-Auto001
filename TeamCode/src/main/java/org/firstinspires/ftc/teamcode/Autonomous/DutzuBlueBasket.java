@@ -21,6 +21,7 @@ public class DutzuBlueBasket extends LinearOpMode {
     Servo s2;
     Servo s3;
     Servo s4;
+    Servo s5;
     @Override
     public void runOpMode() {
 
@@ -30,6 +31,8 @@ public class DutzuBlueBasket extends LinearOpMode {
         s2 = hardwareMap.get(Servo.class, "s2");
         s3 = hardwareMap.get(Servo.class, "s3");
         s4 = hardwareMap.get(Servo.class, "s4");
+        s5 = hardwareMap.get(Servo.class, "s5");
+
         OUTTAKE = hardwareMap.get(DcMotorEx.class, "OUTTAKE");
         INTAKE = hardwareMap.get(DcMotorEx.class, "INTAKE");
         OUTTAKE.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -37,7 +40,7 @@ public class DutzuBlueBasket extends LinearOpMode {
         INTAKE.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
         // Flipped start position with mirrored heading
-        Pose2d startPose = new Pose2d(-48.6, 48.6, Math.toRadians(307));
+        Pose2d startPose = new Pose2d(-48.6, 48.6, Math.toRadians(127));
         drive.setPoseEstimate(startPose);
 
         // -------- FAST CONSTRAINTS --------
@@ -45,16 +48,16 @@ public class DutzuBlueBasket extends LinearOpMode {
                 new TranslationalVelocityConstraint(40);
 
         TrajectoryAccelerationConstraint fastAccel =
-                new ProfileAccelerationConstraint(37);
+                new ProfileAccelerationConstraint(40);
 
 
 
         // -------- SLOW CONSTRAINTS --------
         TrajectoryVelocityConstraint slowVel =
-                new TranslationalVelocityConstraint(20);
+                new TranslationalVelocityConstraint(15);
 
         TrajectoryAccelerationConstraint slowAccel =
-                new ProfileAccelerationConstraint(17);
+                new ProfileAccelerationConstraint(15);
 
         waitForStart();
 
@@ -71,15 +74,24 @@ public class DutzuBlueBasket extends LinearOpMode {
                         //launcher ON|
 
                         .UNSTABLE_addTemporalMarkerOffset(0.1, () -> OUTTAKE.setPower(1))
-                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(1))
+
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s2.setPosition(1))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s3.setPosition(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s4.setPosition(1))
+
                         .waitSeconds(3)
+
                         .UNSTABLE_addTemporalMarkerOffset(0, () -> OUTTAKE.setPower(0))
                         .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(0.5))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s2.setPosition(0.5))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s3.setPosition(0.5))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s4.setPosition(0.5))
 
 
 
                         // ===== PURGE 1 (SLOW) =====
-                        .lineToSplineHeading(new Pose2d(-12, 18, Math.toRadians(90)))
+                        .lineToSplineHeading(new Pose2d(-12, 25, Math.toRadians(90)))
 
                         .resetConstraints()
                         .setConstraints(slowVel, slowAccel) //slow
@@ -90,7 +102,7 @@ public class DutzuBlueBasket extends LinearOpMode {
                         })
 
 
-                        .lineToSplineHeading(new Pose2d(-12, 47, Math.toRadians(90)))
+                        .lineToSplineHeading(new Pose2d(-12, 57, Math.toRadians(90)))
 
                         .addDisplacementMarker(() -> {
                             INTAKE.setPower(0);
@@ -105,16 +117,23 @@ public class DutzuBlueBasket extends LinearOpMode {
 
                         //launcher ON
 
-                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> OUTTAKE.setPower(1))
-                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(1))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s2.setPosition(1))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s3.setPosition(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s4.setPosition(1))
+
                         .waitSeconds(3)
+
                         .UNSTABLE_addTemporalMarkerOffset(0, () -> OUTTAKE.setPower(0))
                         .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(0.5))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s2.setPosition(0.5))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s3.setPosition(0.5))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s4.setPosition(0.5))
 
 
 
                         // ===== PURGE 2 (SLOW) =====
-                        .lineToSplineHeading(new Pose2d(12, 15, Math.toRadians(90)))
+                        .lineToSplineHeading(new Pose2d(7, 20, Math.toRadians(90)))
 
                         .resetConstraints()
                         .setConstraints(slowVel, slowAccel)
@@ -124,7 +143,7 @@ public class DutzuBlueBasket extends LinearOpMode {
                             INTAKE.setPower(0.6);
                         })
 
-                        .lineToSplineHeading(new Pose2d(22, 55, Math.toRadians(90)))
+                        .lineToSplineHeading(new Pose2d(22, 65, Math.toRadians(90)))
                         .lineToSplineHeading(new Pose2d(22, 40, Math.toRadians(90)))
 
 
@@ -140,11 +159,18 @@ public class DutzuBlueBasket extends LinearOpMode {
 
 
                         //launcher ON
-                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(1))
-                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> OUTTAKE.setPower(1))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s2.setPosition(1))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s3.setPosition(0))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s4.setPosition(1))
+
                         .waitSeconds(3)
+
                         .UNSTABLE_addTemporalMarkerOffset(0, () -> OUTTAKE.setPower(0))
                         .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s1.setPosition(0.5))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s2.setPosition(0.5))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s3.setPosition(0.5))
+                        .UNSTABLE_addTemporalMarkerOffset(0.1, () -> s4.setPosition(0.5))
 
 
 
